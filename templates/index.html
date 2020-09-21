@@ -1,0 +1,7 @@
+{% extends "layout.html" %}
+    
+{% block content %}
+    {% for building in buildings %}
+      <h1><a href="/detail/{{ building.building_id }}"> {{ building.address }}</a></h1>
+    {% endfor %}
+{% endblock %}
