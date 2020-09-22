@@ -7,7 +7,7 @@ class Base(Model):
         database = DATABASE
 
 class MonthlyBase(Base):
-    month = IntegerField()
+    month = CharField()
     year = IntegerField()
     name = CharField()
     amount = IntegerField()

@@ -1,14 +1,15 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h1>{{ expense.month }} {{ expense.year }}</h1>
-<h1>Expenses:</h1>
-<h3>{{ expense.name }}: {{ expense.amount }}</h3> <!-- reference the class then reference the attribute -->
-<h1>Income:</h1>
-{% for income in incomes %}
-<h2>{{ income.unit.income.name }}</h2>
-    <h3>{{ income.unit.unit_num }}</h3>
-    <p>{{ income.unit.income.amount }}</p>
-{% endfor %}
+
+    <h1>{{ expense.month }} {{ expense.year }}</h1>
+    <h1>Expenses:</h1>
+    <h3>{{ expense.name }}: {{ expense.amount }}</h3> <!-- reference the lowercase class then reference the attribute -->
+    <h1>Income:</h1>
+    {% for income in incomes %}
+        <h2>{{ income.unit.income.name }}</h2>
+            <h3>{{ income.unit.unit_num }}</h3>
+            <p>{{ income.unit.income.amount }}</p>
+    {% endfor %}
 
 {% endblock %}
