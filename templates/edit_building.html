@@ -1,4 +1,6 @@
 {% extends 'index.html' %}
+{% from 'macros.html' import render_field %}
+
 
 {% block content %}
 <div class="edit-entry">
@@ -6,12 +8,10 @@
     <form method="POST" action="/entries/{{ building.building_id }}/edit">
         {{ form.hidden_tag() }}
         <label for="building">Building</label>
-        <input id="building" type="text" name="building" value="{{ building.address }}"
-            ><br>
-        <button class="button" type="submit" id="submit" href="{{ url_for('index') }}" >Publish Entry
-            </button>
-        <a href="{{ url_for('index') }}" 
-            class="button button-secondary">Cancel</a> 
+            {{ render_field(form.address) }}
+        <!-- <input id="building" type="text" name="building" value="{{ building.address }}"> -->
+        <button class="button" type="submit" id="submit">Publish Entry</button>
+        <a href="{{ url_for('index') }}" class="button button-secondary">Cancel</a> 
     </form>
 </div>
 {%endblock%}

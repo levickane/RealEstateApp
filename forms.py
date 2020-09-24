@@ -4,13 +4,9 @@ from wtforms.validators import DataRequired, InputRequired
 
 from models import *
 
-class NewBuilidng(FlaskForm):
+class NewBuilding(FlaskForm):
     address = StringField(
         "Address",
-        validators = [DataRequired()
-        ])
-    unit_num = StringField(
-        "Unit Number",
         validators = [DataRequired()
         ])
 
@@ -23,8 +19,8 @@ class NewExpense(FlaskForm):
         "Year",
         validators = [DataRequired()
         ])
-    name = StringField(
-        "Name",
+    name = SelectField(
+        u"Name",
         validators = [DataRequired()
         ])
     amount = StringField(
@@ -42,10 +38,6 @@ class NewIncome(FlaskForm):
         "Year",
         validators = [DataRequired()
         ])
-    name = StringField(
-        "Name",
-        validators = [DataRequired()
-        ])
     amount = StringField(
         "Amount",
         validators = [DataRequired()
@@ -55,8 +47,18 @@ class NewIncome(FlaskForm):
     )
 
 
+
+class NewExpenseName(FlaskForm):
+    expense_name = StringField(
+        "New Expense",
+        validators = [DataRequired()
+        ])
+
+
+
 class NewUnit(FlaskForm):
     new = StringField(
         "New Unit",
         validators = [DataRequired()
         ])
+

@@ -9,13 +9,12 @@ class Base(Model):
 class MonthlyBase(Base):
     month = CharField()
     year = IntegerField()
-    name = CharField()
     amount = IntegerField()
 
 
 class Building(Base): 
     building_id = IntegerField(primary_key=True, unique=True)
-    address = CharField(max_length = 100)
+    address = CharField(max_length = 100, default = "Address")
 
 class Unit(Base):
     unit_id = IntegerField(primary_key=True, unique=True)
@@ -25,6 +24,8 @@ class Unit(Base):
 class Expense(MonthlyBase):
     expense_id = IntegerField(primary_key=True, unique=True)
     building = ForeignKeyField(Building, backref = "expenses")
+    expense_type = CharField(max_length = 20)
+    
 
 class Income(MonthlyBase):
     income_id = IntegerField(primary_key=True, unique=True)

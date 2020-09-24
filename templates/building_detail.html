@@ -4,27 +4,39 @@
 {% block content %}
 <h1>{{ building.address }} <a href="{{ url_for('index') }}">HOME</a></h1>
     <h2>Expenses:</h2>
+
+    <div class="new-expense">
+        <h3>New Expense</h3>
+        <form method="POST" action="/detail/{{ id }}/new_expense_name">
+            {% for expense in form %}
+                {{ render_field(expense) }}
+            {% endfor %}
+            <button type="submit" href="{{ url_for('index') }}" 
+                    class="button">Publishandra Entriniqua</button>
+        </form>
+    </div>
+
 {% if expense != None %}
     {% for expense in expenses %}
-        <h2>{{ expense.expense.month }} {{ expense.expense.year }}</h2>
-        <h3>{{ expense.expense.name }}: {{ expense.expense.amount }}</h3> <!-- reference the lowercase class then reference the attribute -->
+        <h3>{{ expense.expense.month }} {{ expense.expense.year }}</h3>
+        <h4>{{ expense.expense.name }}: {{ expense.expense.amount }}</h4> <!-- reference the lowercase class then reference the attribute -->
     {%endfor%}
 {% endif %} 
-    <h1>Income:</h1>
+    <h2>Income:</h2>
     {% for income in incomes %}
-        <h2>{{ income.unit.income.name }}</h2>
-            <h3>{{ income.unit.unit_num }}</h3>
+        <h3>{{ income.unit.income.name }} {{income.unit.income.month}} {{income.unit.income.year}}</h3>
+            <h4>{{ income.unit.unit_num }}</h4>
             <p>{{ income.unit.income.amount }}</p>
     {% endfor %}
 
     <div class="new-unit">
-        <h2>New Unit</h2>
-    <form method="POST" action="/detail/{{ id }}/new_unit">
-        {% for field in form %}
-            {{ render_field(field) }}
-        {% endfor %}
-        <button type="submit" href="{{ url_for('index') }}" 
-                class="button">Publishiny Entrizalini</button>
-    </form>
-    
+            <h3>New Unit</h3>
+        <form method="POST" action="/detail/{{ id }}/new_unit">
+            {% for field in form %}
+                {{ render_field(field) }}
+            {% endfor %}
+            <button type="submit" href="{{ url_for('index') }}" 
+                    class="button">Publishiny Entrizalini</button>
+        </form>
+    </div>
 {% endblock %}
