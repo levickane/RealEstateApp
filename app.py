@@ -32,19 +32,13 @@ def index():
     return render_template('index.html', buildings=buildings)
 
 
-@app.route('/entries/<int:id>/new_month', methods=('GET', 'POST'))
-@app.route('/details/<int:id>/new_month', methods=('GET', 'POST'))
-def new_month(id):
-    form = forms.NewMonth()
-    forme = forms.NewMonthIncome()
+@app.route('/entries/<int:id>/new_expense', methods=('GET', 'POST'))
+@app.route('/details/<int:id>/new_expense', methods=('GET', 'POST'))
+def new_expense(id):
+    form = forms.NewExpense()
     if form.validate_on_submit():
         models.Expense.create(
-            month = form.month.data,
-            year = form.year.data,
-            name = form.name.data,
-            amount = form.amount.data
-        ).save()
-        models.Income.create(
+            building_id = id,
             month = form.month.data,
             year = form.year.data,
             name = form.name.data,
@@ -52,11 +46,33 @@ def new_month(id):
         ).save()
         flash("Entry Saved!", "Success!")
         return redirect(url_for('index'))
-    return render_template('new_month.html', form=form, forme=forme)
+    return render_template('new_expense.html', form=form)
+
+
+
+@app.route('/entries/<int:id>/new_income', methods=('GET', 'POST'))
+@app.route('/details/<int:id>/new_income', methods=('GET', 'POST'))
+def new_income(id):
+    formi = forms.NewIncome()
+    building_units = models.Unit.select(models.Unit.unit_id, models.Unit.unit_num).where(models.Unit.building_id == id)
+    formi.unit.choices = [(i.unit_id, i.unit_num) for i in building_units]
+    if formi.validate_on_submit():
+        models.Income.create(
+            unit_id = formi.unit.data,
+            month = formi.month.data,
+            year = formi.year.data,
+            name = formi.name.data,
+            amount = formi.amount.data
+        ).save()
+        flash("Entry Saved!", "Success!")
+        return redirect(url_for('index'))
+    return render_template('new_income.html', formi=formi)
+
 
 @app.route('/detail/<int:id>')
 def detail(id):
-    expense = (models.Building
+    form = forms.NewUnit()
+    expenses = (models.Building
         .select(models.Building, 
                 models.Expense.month, 
                 models.Expense.year, 
@@ -64,7 +80,7 @@ def detail(id):
                 models.Expense.amount)
         .join(models.Expense)
         .where(models.Building.building_id == id)
-        ).first()
+        )
     incomes = (models.Building
         .select(models.Building,
                 models.Unit.unit_num,
@@ -76,17 +92,19 @@ def detail(id):
         .join(models.Income)
         .where(models.Building.building_id == id)
         )
-    return render_template('building_detail.html', expense=expense.expense, incomes=incomes)
+    building = models.Building.select(models.Building.address).where(models.Building.building_id == id).first()
+    return render_template('building_detail.html', expenses=expenses, incomes=incomes, form=form, id=id, building=building)
 
 
 @app.route('/index/new_building', methods=('GET', 'POST'))
 def add_building():
     form = forms.NewBuilidng()
     if form.validate_on_submit():
-        print("hello")
-        models.Building.create(
-            address = form.address.data).save()
+        building1 = models.Building.create(
+            address = form.address.data)
+        building1.save()
         models.Unit.create(
+            building = building1,
             unit_num = form.unit_num.data).save()
         flash("Entry Saved!", "Success!")
         return redirect(url_for('index'))
@@ -101,10 +119,21 @@ def edit_building(id):
         abort(404)
     form = forms.NewBuilidng()
     if form.validate_on_submit():
-        builindg.address = form.address.data
-        entry.save()
+        building.address = form.address.data
         return redirect(url_for('index'))
     return render_template('edit_building.html', form=form, building=building)
+
+
+@app.route('/detail/<int:id>/new_unit', methods=["POST"])
+def new_unit(id):
+    form = forms.NewUnit()
+    if form.validate_on_submit():
+        models.Unit.create(
+            unit_num = form.new.data,
+            building_id = id
+        ).save()
+        return redirect('/detail/'+ str(id))
+    return redirect(url_for('index'))
 
 
 @app.route('/entries/<int:id>/delete')

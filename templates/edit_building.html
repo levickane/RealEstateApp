@@ -8,10 +8,6 @@
         <label for="building">Building</label>
         <input id="building" type="text" name="building" value="{{ building.address }}"
             ><br>
-        <label for="unit_num">Unit Number</label>
-        <input id="unit_num" type="text" name="unit_num" 
-            value="{{ building.unit_num }}"><br>
-        
         <button class="button" type="submit" id="submit" href="{{ url_for('index') }}" >Publish Entry
             </button>
         <a href="{{ url_for('index') }}" 
