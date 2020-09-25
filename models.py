@@ -18,21 +18,26 @@ class Building(Base):
 
 class Unit(Base):
     unit_id = IntegerField(primary_key=True, unique=True)
-    building = ForeignKeyField(Building, backref = "unit")
+    building = ForeignKeyField(Building, backref = "units")
     unit_num = CharField(max_length = 10)
+
+class ExpenseType(Base):
+    expense_type_id = IntegerField(primary_key=True, unique=True)
+    expense_type = CharField(max_length = 20)
 
 class Expense(MonthlyBase):
     expense_id = IntegerField(primary_key=True, unique=True)
     building = ForeignKeyField(Building, backref = "expenses")
-    expense_type = CharField(max_length = 20)
-    
+    expense_type = ForeignKeyField(ExpenseType)
 
 class Income(MonthlyBase):
     income_id = IntegerField(primary_key=True, unique=True)
-    unit = ForeignKeyField(Unit, backref = "income")
+    unit = ForeignKeyField(Unit, backref = "incomes")
     
 
 
+
+
 DATABASE.connect()
-DATABASE.create_tables([Building, Unit, Expense, Income], safe=True)
+DATABASE.create_tables([Building, Unit, Expense, Income, ExpenseType], safe=True)
 DATABASE.close()

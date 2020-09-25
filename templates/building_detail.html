@@ -4,29 +4,22 @@
 {% block content %}
 <h1>{{ building.address }} <a href="{{ url_for('index') }}">HOME</a></h1>
     <h2>Expenses:</h2>
-
-    <div class="new-expense">
-        <h3>New Expense</h3>
-        <form method="POST" action="/detail/{{ id }}/new_expense_name">
-            {% for expense in form %}
-                {{ render_field(expense) }}
-            {% endfor %}
-            <button type="submit" href="{{ url_for('index') }}" 
-                    class="button">Publishandra Entriniqua</button>
-        </form>
-    </div>
+    <h3>Total Expenses: {{ expense_total }}</h3>
 
 {% if expense != None %}
     {% for expense in expenses %}
         <h3>{{ expense.expense.month }} {{ expense.expense.year }}</h3>
-        <h4>{{ expense.expense.name }}: {{ expense.expense.amount }}</h4> <!-- reference the lowercase class then reference the attribute -->
+        <p>{{ expense.expense.expense_type.expense_type }}: ${{ expense.expense.amount }}</p> <!-- reference the lowercase class then reference the attribute -->
     {%endfor%}
 {% endif %} 
     <h2>Income:</h2>
-    {% for income in incomes %}
-        <h3>{{ income.unit.income.name }} {{income.unit.income.month}} {{income.unit.income.year}}</h3>
-            <h4>{{ income.unit.unit_num }}</h4>
-            <p>{{ income.unit.income.amount }}</p>
+    <h3>Total Income: {{ income_total }}</h3>
+    {% for unit in building_income.units %}
+        {% for income in unit.incomes %}
+            <h3>{{ income.name }} {{income.month}} {{income.year}}</h3>
+                <h4>{{ unit.unit_num }}</h4>
+                <p>${{ income.amount }}</p>
+        {% endfor %}
     {% endfor %}
 
     <div class="new-unit">

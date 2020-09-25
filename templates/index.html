@@ -1,10 +1,23 @@
 {% extends "layout.html" %}
+{% from 'macros.html' import render_field %}
+
     
 {% block content %}
 <header>
   <a class="button icon-right" href="{{ url_for('add_building') }}">
     <span>New Building</span> <i class="material-icons">add</i></a>
 </header>
+
+<div class="new-expense">
+  <h3>New Expense</h3>
+  <form method="POST" action="/entries">
+      {% for expense in expenseform %}
+          {{ render_field(expense) }}
+      {% endfor %}
+      <button type="submit" href="{{ url_for('index') }}" 
+              class="button">Publishandra Entriniqua</button>
+  </form>
+</div>
     {% for building in buildings %}
       <h1><a href="/detail/{{ building.building_id }}"> {{ building.address }}</a></h1>
       <div class="edit">

@@ -29,18 +29,20 @@ def after_request(response):
 @app.route('/entries')
 def index():
     buildings = models.Building.select()
-    return render_template('index.html', buildings=buildings)
+    expenseform = forms.NewExpenseName()
+    return render_template('index.html', buildings=buildings, expenseform=expenseform)
 
 
 @app.route('/entries/<int:id>/new_expense', methods=('GET', 'POST'))
 @app.route('/details/<int:id>/new_expense', methods=('GET', 'POST'))
 def new_expense(id):
     form = forms.NewExpense()
-    building_expense = models.Expense.select(models.Expense.expense_id, models.Expense.expense_type).where(models.Expense.building_id == id)
-    form.choices = [(i.expense_id, i.expense_type) for i in building_expense]
+    building_expense = models.ExpenseType.select(models.ExpenseType.expense_type_id, models.ExpenseType.expense_type)
+    form.name.choices = [(i.expense_type_id, i.expense_type) for i in building_expense]
     if form.validate_on_submit():
         models.Expense.create(
-            expense_type = form.new_expense_name.data,
+            building_id = id,
+            expense_type = form.name.data,
             month = form.month.data,
             year = form.year.data,
             amount = form.amount.data
@@ -76,12 +78,14 @@ def detail(id):
         .select(models.Building, 
                 models.Expense.month, 
                 models.Expense.year, 
-                models.Expense.expense_type,
+                models.ExpenseType.expense_type,
                 models.Expense.amount)
         .join(models.Expense)
+        .join(models.ExpenseType)
         .where(models.Building.building_id == id)
         )
-    incomes = (models.Building
+    expense_total = sum(int(i.expense.amount) for i in expenses)
+    building_income = (models.Building
         .select(models.Building,
                 models.Unit.unit_num,
                 models.Income.month,
@@ -90,9 +94,10 @@ def detail(id):
         .join(models.Unit)
         .join(models.Income)
         .where(models.Building.building_id == id)
-        )
+        ).first()
+    income_total = sum(int(i.amount) for u in building_income.units for i in u.incomes)
     building = models.Building.select(models.Building.address).where(models.Building.building_id == id).first()
-    return render_template('building_detail.html', expenses=expenses, incomes=incomes, form=form, id=id, building=building)
+    return render_template('building_detail.html', expenses=expenses, building_income=building_income, form=form, id=id, building=building, expense_total=expense_total, income_total=income_total)
 
 
 @app.route('/index/new_building', methods=('GET', 'POST'))
@@ -132,15 +137,14 @@ def new_unit(id):
 
 
 
-@app.route('/detail/<int:id>/new_expense_name', methods=["POST"])
-def new_expense_name(id):
+@app.route('/entries', methods=["POST"])
+def new_expense_name():
     form = forms.NewExpenseName()
     if form.validate_on_submit():
-        models.Expense.create(
-            expense_type = form.expense_name.data,
-            building_id = id
+        models.ExpenseType.create(
+            expense_type = form.expense_name.data
         ).save()
-        return redirect('/detail/'+ str(id))
+        return redirect('/entries')
     return redirect(url_for('index'))
 
 
